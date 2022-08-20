@@ -1,3 +1,5 @@
+//wow look at that a comment
+
 package com.example.hackingamirite;
 
 import android.os.Bundle;
