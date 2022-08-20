@@ -23,13 +23,13 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -46,11 +46,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private ImageView mImageView;
     private Button mTextButton;
     private Bitmap mSelectedImage;
+    private TextView mTextView;
     //private Bitmap mSelectedImage =  BitmapFactory.decodeFile("C:\\Users\\dutta\\AndroidStudioProjects\\hacking-amirite\\app\\src\\main\\assets\\Please_walk_on_the_grass.jpg");
     private GraphicOverlay mGraphicOverlay;
     // Max width (portrait mode)
@@ -91,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mImageView = findViewById(R.id.image_view);
 
         mTextButton = findViewById(R.id.button_text);
+        mTextView = findViewById(R.id.read_text);
         mGraphicOverlay = findViewById(R.id.graphic_overlay);
         mTextButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
     }
     private void setImage() {
-        mSelectedImage= getBitmapFromAsset(this, "Please_walk_on_the_grass.jpg");
+        mSelectedImage= getBitmapFromAsset(this, "handwriting_test.jpg");
         Pair<Integer, Integer> targetedSize = getTargetedWidthHeight();
 
         int targetWidth = targetedSize.first;
@@ -155,15 +157,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             showToast("No text found");
             return;
         }
-        mGraphicOverlay.clear();
+        //mGraphicOverlay.clear();
         for (int i = 0; i < blocks.size(); i++) {
             List<Text.Line> lines = blocks.get(i).getLines();
             for (int j = 0; j < lines.size(); j++) {
                 List<Text.Element> elements = lines.get(j).getElements();
                 for (int k = 0; k < elements.size(); k++) {
-                    GraphicOverlay.Graphic textGraphic = new TextGraphic(mGraphicOverlay, elements.get(k));
-                    mGraphicOverlay.add(textGraphic);
+                    //GraphicOverlay.Graphic textGraphic = new TextGraphic(mGraphicOverlay, elements.get(k));
+                    //mGraphicOverlay.add(textGraphic);
+                    if(i==0 && j==0 && k==0)
+                        mTextView.setText(elements.get(k).getText() + " ");
+                    else
+                        mTextView.append(elements.get(k).getText() + " ");
+
                 }
+                mTextView.append("\n");
             }
         }
     }
@@ -214,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         return new Pair<>(targetWidth, targetHeight);
     }
 
-    public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
+   /* public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
         mGraphicOverlay.clear();
         switch (position) {
             case 0:
@@ -253,7 +261,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
         // Do nothing
-    }
+    }*/
 
     public static Bitmap getBitmapFromAsset(Context context, String filePath) {
         AssetManager assetManager = context.getAssets();

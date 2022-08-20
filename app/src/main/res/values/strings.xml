@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Hacking amirite lfmao</string>
+    <string name="app_name">Hacking amirite</string>
     <string name="select_image_for_text_recognition">Select image for text recognition</string>
     <string name="find_text_button">Find text</string>
     <string name="find_face_contour_button">Find face contour</string>
