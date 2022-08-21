@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/dutta/AndroidStudioProjects/hacking-amirite/app/src/main/res/layout-v21/activity_camera_view.xml" value="0.22826086956521738" />
+        <entry key="..\:/Users/dutta/AndroidStudioProjects/hacking-amirite/app/src/main/res/layout/activity_camera_view.xml" value="0.176" />
         <entry key="..\:/Users/dutta/AndroidStudioProjects/hacking-amirite/app/src/main/res/layout/activity_main.xml" value="0.264" />
         <entry key="..\:/Users/dutta/AndroidStudioProjects/hackingamirite/app/src/main/res/layout/fragment_first.xml" value="0.264" />
         <entry key="..\:/Users/dutta/AndroidStudioProjects/hackingamirite/app/src/main/res/layout/fragment_second.xml" value="0.14857456140350878" />
@@ -14,5 +16,12 @@
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+  </component>
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.22826086956521738" />
+      </ProjectState>
+    </option>
   </component>
 </project>

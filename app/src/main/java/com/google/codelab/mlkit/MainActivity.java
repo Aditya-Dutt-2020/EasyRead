@@ -14,15 +14,22 @@
 
 package com.google.codelab.mlkit;
 
+import android.Manifest;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
@@ -39,8 +46,10 @@ import com.google.mlkit.vision.text.Text;
 import com.google.mlkit.vision.text.TextRecognition;
 import com.google.mlkit.vision.text.TextRecognizer;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -53,11 +62,12 @@ public class MainActivity extends AppCompatActivity {
     private Bitmap mSelectedImage;
     private TextView mTextView;
     //private Bitmap mSelectedImage =  BitmapFactory.decodeFile("C:\\Users\\dutta\\AndroidStudioProjects\\hacking-amirite\\app\\src\\main\\assets\\Please_walk_on_the_grass.jpg");
-    private GraphicOverlay mGraphicOverlay;
+    //private GraphicOverlay mGraphicOverlay;
     // Max width (portrait mode)
     private Integer mImageMaxWidth;
     // Max height (portrait mode)
     private Integer mImageMaxHeight;
+    private Bundle extras;
 
     /**
      * Number of results to show in the UI.
@@ -86,23 +96,67 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        extras = getIntent().getExtras();
         super.onCreate(savedInstanceState);
+
+
         setContentView(R.layout.activity_main);
 
         mImageView = findViewById(R.id.image_view);
 
         mTextButton = findViewById(R.id.button_text);
         mTextView = findViewById(R.id.read_text);
-        mGraphicOverlay = findViewById(R.id.graphic_overlay);
+       // mGraphicOverlay = findViewById(R.id.graphic_overlay);
         mTextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setImage();
+                try {
+                    setImage();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
+        if((ContextCompat.checkSelfPermission(MainActivity.this,
+                Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED)
+                || (ContextCompat.checkSelfPermission(MainActivity.this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED))
+        {
+            Log.i(TAG, "trying to request");
+            ActivityCompat.requestPermissions
+                    (MainActivity.this, new String[]{
+                            Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    },225);
+        }
+        else
+            Log.i(TAG, "Permissions are granted");
     }
-    private void setImage() {
-        mSelectedImage= getBitmapFromAsset(this, "handwriting_test.jpg");
+    private void setImage() throws IOException {
+        //mSelectedImage= getBitmapFromAsset(this, "handwriting_test.jpg");
+        //ContentValues contentValues = new ContentValues();
+        //contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, "1661045619776");
+        //contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg");
+        //Uri.Builder builder = new Uri.Builder();
+        //builder.appendPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI.toString())
+//                .appendPath("1661045619776.jpg");
+//        Log.i(TAG, builder.build().toString());
+//        mSelectedImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(), builder.build());
+
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        //options.inScaled = true;
+        options.inSampleSize = 3;
+        options.inJustDecodeBounds = false;
+        File file = new File("/storage/emulated/0/Pictures/"+String.valueOf(extras.getLong("ts"))+".jpg");
+        if(file.exists())
+            Log.i(TAG, "yes file exists");
+        else
+            Log.i(TAG, "no, file does not exist");
+        mSelectedImage = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+        if (mSelectedImage == null)
+            Log.i(TAG, "but bitmap is null");
+        else
+            Log.i(TAG, "bitmap is not null");
         Pair<Integer, Integer> targetedSize = getTargetedWidthHeight();
 
         int targetWidth = targetedSize.first;
