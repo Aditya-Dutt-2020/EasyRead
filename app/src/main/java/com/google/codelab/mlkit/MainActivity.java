@@ -15,8 +15,10 @@
 package com.google.codelab.mlkit;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
@@ -58,7 +60,7 @@ import java.util.PriorityQueue;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private ImageView mImageView;
-    private Button mTextButton;
+    private Button mTextButton, mTakePicButton;
     private Bitmap mSelectedImage;
     private TextView mTextView;
     //private Bitmap mSelectedImage =  BitmapFactory.decodeFile("C:\\Users\\dutta\\AndroidStudioProjects\\hacking-amirite\\app\\src\\main\\assets\\Please_walk_on_the_grass.jpg");
@@ -105,6 +107,14 @@ public class MainActivity extends AppCompatActivity {
         mImageView = findViewById(R.id.image_view);
 
         mTextButton = findViewById(R.id.button_text);
+        mTakePicButton = findViewById(R.id.take_new);
+        mTakePicButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(MainActivity.this, CameraView.class);
+                startActivity(i);
+            }
+        });
         mTextView = findViewById(R.id.read_text);
        // mGraphicOverlay = findViewById(R.id.graphic_overlay);
         mTextButton.setOnClickListener(new View.OnClickListener() {
@@ -205,6 +215,7 @@ public class MainActivity extends AppCompatActivity {
                         });
     }
 
+    @SuppressLint("SetTextI18n")
     private void processTextRecognitionResult(Text texts) {
         List<Text.TextBlock> blocks = texts.getTextBlocks();
         if (blocks.size() == 0) {
@@ -254,10 +265,6 @@ public class MainActivity extends AppCompatActivity {
     // landscape mode.
     private Integer getImageMaxHeight() {
         if (mImageMaxHeight == null) {
-            // Calculate the max width in portrait mode. This is done lazily since we need to
-            // wait for
-            // a UI layout pass to get the right values. So delay it to first time image
-            // rendering time.
             mImageMaxHeight =
                     mImageView.getHeight();
         }
@@ -276,59 +283,4 @@ public class MainActivity extends AppCompatActivity {
         return new Pair<>(targetWidth, targetHeight);
     }
 
-   /* public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
-        mGraphicOverlay.clear();
-        switch (position) {
-            case 0:
-                mSelectedImage = getBitmapFromAsset(this, "Please_walk_on_the_grass.jpg");
-                break;
-            case 1:
-                // Whatever you want to happen when the thrid item gets selected
-                mSelectedImage = getBitmapFromAsset(this, "grace_hopper.jpg");
-                break;
-        }
-        if (mSelectedImage != null) {
-            // Get the dimensions of the View
-            Pair<Integer, Integer> targetedSize = getTargetedWidthHeight();
-
-            int targetWidth = targetedSize.first;
-            int maxHeight = targetedSize.second;
-
-            // Determine how much to scale down the image
-            float scaleFactor =
-                    Math.max(
-                            (float) mSelectedImage.getWidth() / (float) targetWidth,
-                            (float) mSelectedImage.getHeight() / (float) maxHeight);
-
-            Bitmap resizedBitmap =
-                    Bitmap.createScaledBitmap(
-                            mSelectedImage,
-                            (int) (mSelectedImage.getWidth() / scaleFactor),
-                            (int) (mSelectedImage.getHeight() / scaleFactor),
-                            true);
-
-            mImageView.setImageBitmap(resizedBitmap);
-            mSelectedImage = resizedBitmap;
-        }
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-        // Do nothing
-    }*/
-
-    public static Bitmap getBitmapFromAsset(Context context, String filePath) {
-        AssetManager assetManager = context.getAssets();
-
-        InputStream is;
-        Bitmap bitmap = null;
-        try {
-            is = assetManager.open(filePath);
-            bitmap = BitmapFactory.decodeStream(is);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return bitmap;
-    }
 }
